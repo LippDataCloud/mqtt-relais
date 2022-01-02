@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# project
+/conf/certs/
+.vscode/launch.json
+conf/config.yaml
+conf/config.yaml_live.yml
+conf/ttn_sensor_config.json
