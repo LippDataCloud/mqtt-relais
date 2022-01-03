@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  mqttrelais:
+    image: mqttrelais
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - type: bind
+        source: ./conf
+        target: /app/conf

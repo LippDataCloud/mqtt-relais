@@ -134,3 +134,4 @@ dmypy.json
 conf/config.yaml
 conf/config.yaml_live.yml
 conf/ttn_sensor_config.json
+.vscode/
