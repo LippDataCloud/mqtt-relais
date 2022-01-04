@@ -13,6 +13,8 @@ import importlib
 import argparse
 import os
 import re
+from rich.logging import RichHandler
+
 
 from datetime import datetime
 import paho.mqtt.client as mqtt
