@@ -3,9 +3,10 @@ version: '3.4'
 services:
   mqttrelais:
     image: mqttrelais
-    volumes:
-      - ./conf/logging.conf:/app/conf/logging.conf:ro
-      - ./conf/config.yaml:/app/conf/config.yaml:ro
     build:
       context: .
       dockerfile: ./Dockerfile
+    volumes:
+      - type: bind
+        source: ./conf
+        target: /app/conf
