@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 import time
+import json
+import base64
 from MessageConverters.MessageConverter import MessageConverter
 
 '''
@@ -41,7 +43,7 @@ class MS_AM3XX(MessageConverter):
         0x0E: 'beep' # [1byte ] Unit: 
         } # noqa
 
-    def __init__(self, devicename):
+    def __init__(self, devicename=None):
         super().__init__(devicename)
 
     def parse_battery(self):
@@ -225,12 +227,11 @@ class MS_AM3XX(MessageConverter):
     def _getDownlinkMessage(self):
         return None
 
-    def _convert(self, payload, port):
-        publ_array = []
+    def _convert(self, message):
+        message = json.loads(message.decode('utf-8'))
+        preconverted = message.get('preconverted')
         self.curr_time = int(time.time())
-        self.payload = list(bytearray(payload))
-        entry = {}
-        entry['fields'] = {}
+        self.payload = list(bytearray(base64.b64decode(preconverted.get('payload'))))
         try:
             while len(self.payload) > 1:
                 # header
@@ -252,7 +253,7 @@ class MS_AM3XX(MessageConverter):
                             sensorvalues
                         ))
                         if sensorvalues:
-                            entry['fields'].update(sensorvalues)
+                            preconverted.update(sensorvalues)
                     else:
                         self.logger.exception(
                             "Method for {} not implemented".format(
@@ -262,5 +263,5 @@ class MS_AM3XX(MessageConverter):
                         "Unknown Sensortype: {}".format(sensortype_bytes))
         except Exception:
             self.logger.exception("Error while trying to decode payload..")
-        publ_array.extend([entry])
-        return publ_array
+        message['preconverted'] = preconverted
+        return json.dumps(message).encode('utf-8')
