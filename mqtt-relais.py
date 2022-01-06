@@ -85,7 +85,7 @@ def on_connect(client: mqtt.Client, userdata, flags, rc):
                 client.subscribe(topic)
     else:
         logger.error(
-            f'Connect for Client {client} failed with result code: {str(rc)}')
+            f"Connect for Client {userdata.get('name')} failed with result code: {str(rc)}")
 
 
 def on_disconnect(client, userdata, rc):
