@@ -249,7 +249,7 @@ class MS_AM3XX(MessageConverter):
                     if method:
                         sensorvalues = method()
                         self.logger.debug("method: {}, result:{}".format(
-                            method,
+                            method_name,
                             sensorvalues
                         ))
                         if sensorvalues:
