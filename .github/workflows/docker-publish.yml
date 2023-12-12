@@ -1,8 +1,8 @@
 name: Docker
 
 on:
-  push:
-    # Publish semver tags as releases.
+  release:
+    types: [published]
     tags: [ 'v*.*.*' ]
   
 env:
