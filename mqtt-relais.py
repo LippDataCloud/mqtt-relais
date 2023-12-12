@@ -111,7 +111,7 @@ def on_message(client: mqtt.Client, userdata, message: mqtt.MQTTMessage):
     # find matching routing
     routes_to_process = []
     for route in userdata.get('routes'):
-        pattern = re.compile("^" + route.get('subscribe-topic').replace('+','.*') +"$")
+        pattern = re.compile("^" + route.get('subscribe-topic').replace('+','.*').replace('#', '.*') +"$")
         if pattern.match(message.topic):
             routes_to_process.append(route)
             
@@ -143,12 +143,18 @@ def on_message(client: mqtt.Client, userdata, message: mqtt.MQTTMessage):
                     message_payload, publish_converter)
             # publish message
             try:
+                publish_topic = route.get('publish_topic')
+
+                if not publish_topic:
+                    publish_topic = message.topic
+                    logger.info(f"retaining message topic")
+                
                 logger.info(
-                    f"publishing message to broker '{route.get('publish-broker')}' on topic '{route.get('publish-topic')}'")
+                    f"publishing message to broker '{route.get('publish-broker')}' on topic '{publish_topic}'")
                 logger.debug(
                     f"message: {message_payload.decode('utf-8')}")
                 publish_client.publish(
-                    route.get('publish-topic'),
+                    publish_topic,
                     payload=message_payload)
             except Exception as error:
                 logger.exception(error)
