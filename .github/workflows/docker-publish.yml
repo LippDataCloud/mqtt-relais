@@ -43,17 +43,23 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - id: lower-repo
+        shell: pwsh
+        run: |
+          "::set-output name=repository::$($env:GITHUB_REPOSITORY.ToLowerInvariant())"
+          
       - name: Push docker image
         id: push
         run:  |
           
           echo "version=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}"
           echo "steps = ${{ steps.meta.outputs.tags }}"
-          docker build . --file Dockerfile --tag $IMAGE_NAME:${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+          docker build . --file Dockerfile --tag ${{ steps.lower-repo.outputs.repository }}:${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
           echo "tag and push images"
           while IFS= read -r tag; do
             echo "push tag: $tag"
-            docker image tag $IMAGE_NAME:${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }} $tag
+            docker image tag ${{ steps.lower-repo.outputs.repository }}:${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }} $tag
             docker image push $tag
           done <<< "${{steps.meta.outputs.tags}}"
           
