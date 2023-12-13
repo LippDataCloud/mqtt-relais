@@ -178,10 +178,12 @@ def connect_mqtt(name, broker_info):
         else:
             auth_type = None
         
-        # generate client id
-        client_id = "{}-{}".format(
-            name,
-            random.randint(150, 205))
+        client_id = broker_info.get("client-id")
+        if not client_id:
+            # generate client id
+            client_id = "{}-{}".format(
+                name,
+                random.randint(150, 205))
 
         # create client object
         client = mqtt.Client(
