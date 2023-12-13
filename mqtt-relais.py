@@ -172,7 +172,12 @@ def connect_mqtt(name, broker_info):
     try:
         ssl.match_hostname = lambda cert, hostname: True
         auth_conf = broker_info.get("auth")
-        auth_type = auth_conf.get("auth_type")
+
+        if auth_conf:
+            auth_type = auth_conf.get("auth_type")
+        else:
+            auth_type = None
+        
         # generate client id
         client_id = "{}-{}".format(
             name,
@@ -216,7 +221,7 @@ def connect_mqtt(name, broker_info):
             keepalive=60)
         return client
     except Exception:
-        logger.error(f"connection for broker {name} failed. skipping this one..")
+        logger.exception(f"connection for broker {name} failed. skipping this one..")
         return None
     
 
